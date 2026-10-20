@@ -13,6 +13,7 @@ Vagrant.configure("2") do |config|
 
   # Transfere o arquivo user-data para a VM
   config.vm.provision "file", source: "user-data", destination: "/tmp/user-data"
+#  config.vm.cloud_init :user_data, path: "user-data"
 
   config.vm.provision "shell", path: "cloud-init_setup.sh" 
 end

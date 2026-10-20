@@ -1,18 +1,39 @@
-#cloud-config
+cloud-config
 
 # Atualiza a lista de pacotes antes das instalações
-
+package_update: true
 
 # Cria um usuário administrador
+users: 
+  - name: luiz
+    gecos: luiz felipe
+    lock_passwd: true
+    groups: sudo
+    ssh_authorized_keys:
+     - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIP2SBJyfBHIIwoYmRRIEs3tHmEyhAaTMN6uVisPv5X7q aluno@DESKTOP-CRQR5L7"
+
+    
+
 
 
 # Instala os softwares declarativamente
 
+packages:
+  - nginx
+  - docker-ce
 
 # Cria uma página personalizada
-
+write_files:
+  - path: var/www/html/index.html
+    owner: luiz:sudo
+    permissions: '0777'
+    content: |
+      hello world
 
 # Executa comandos após as etapas de configuração
 
+runcmd:
+  - [systemctl enable --now nginx, systemctl enable --now docker, usermod -aG docker luiz]
 
 # Mensagem final registrada nos logs
+final_message: "Configuração do user-data realizada com sucesso!"
