@@ -1,18 +1,62 @@
 #cloud-config
 
-# Atualiza a lista de pacotes antes das instalações
+# 1. Atualizar as listas de pacotes
+package_update: true
 
+# 2. Usuário "luiz" com sudo sem senha e acesso SSH por chave
+users:
+  - name: luiz
+    gecos: Luiz
+    shell: /bin/bash
+    groups: [sudo]
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    lock_passwd: true
+    ssh_authorized_keys:
+      - CHAVE_SSH_AQUI
 
-# Cria um usuário administrador
+# 3. Instalar Docker e Nginx
+packages:
+  - nginx
+  - docker.io
 
+# 4. Página personalizada
+write_files:
+  - path: /var/www/html/index.html
+    owner: root:root
+    permissions: "0644"
+    content: |
+      <!DOCTYPE html>
+      <html lang="pt-BR">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Servidor DevOps</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+          }
+          h1 { color: #38bdf8; }
+        </style>
+      </head>
+      <body>
+        <div>
+          <h1>Servidor DevOps provisionado com sucesso!</h1>
+          <p>Vagrant + Cloud-Init + Nginx + Docker</p>
+          <p>Usuário: luiz</p>
+        </div>
+      </body>
+      </html>
 
-# Instala os softwares declarativamente
-
-
-# Cria uma página personalizada
-
-
-# Executa comandos após as etapas de configuração
-
-
-# Mensagem final registrada nos logs
+# 5. Habilitar serviços e adicionar o usuário ao grupo docker
+runcmd:
+  - systemctl enable --now nginx
+  - systemctl enable --now docker
+  - usermod -aG docker luiz
